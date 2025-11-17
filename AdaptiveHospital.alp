@@ -2732,13 +2732,13 @@ logArrival(p);]]></Code>
 					<PublicFlag>false</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
 					<ShowLabel>true</ShowLabel>
-					<Body><![CDATA[void triageDecision() {
-// Assign triage level (1–5). 1 = most urgent.
+					<Body><![CDATA[// Assign triage level (1–5). 1 = most urgent.
 triageLevel = uniform_discr(1, 5);
 
 
 // Store event in treatment history
-treatmentHistory.add("Triage level assigned: " + triageLevel);
+if (treatmentHistory != null) {
+    treatmentHistory.add("Triage assigned = " + triageLevel);
 }]]></Body>
 				</Function>
 			</Functions>
@@ -4135,7 +4135,7 @@ treatmentHistory.add("Triage level assigned: " + triageLevel);
 			<Variables>
 				<Variable Class="PlainVariable">
 					<Id>1763411844115</Id>
-					<Name><![CDATA[taskID]]></Name>
+					<Name><![CDATA[taskId]]></Name>
 					<X>40</X><Y>50</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>false</PublicFlag>
@@ -4205,17 +4205,44 @@ treatmentHistory.add("Triage level assigned: " + triageLevel);
 					<PublicFlag>false</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
 					<ShowLabel>true</ShowLabel>
-					<Body><![CDATA[void initTask(int id, String type, double timeNeeded, int priorityLevel, Patient p){
-this.taskId = id;
-this.taskType = type;
-this.requiredTime = timeNeeded;
-this.priority = priorityLevel;
-this.assignedPatient = p;
-}
-
-void printTask(){
-traceln("[Task] ID=" + taskId + " type=" + taskType + " priority=" + priority);
-}]]></Body>
+					<Parameter>
+						<Name><![CDATA[id]]></Name>
+						<Type><![CDATA[int]]></Type>
+					</Parameter>
+					<Parameter>
+						<Name><![CDATA[type]]></Name>
+						<Type><![CDATA[String]]></Type>
+					</Parameter>
+					<Parameter>
+						<Name><![CDATA[timeNeeded]]></Name>
+						<Type><![CDATA[double]]></Type>
+					</Parameter>
+					<Parameter>
+						<Name><![CDATA[priorityLevel]]></Name>
+						<Type><![CDATA[int]]></Type>
+					</Parameter>
+					<Parameter>
+						<Name><![CDATA[p]]></Name>
+						<Type><![CDATA[Patient]]></Type>
+					</Parameter>
+					<Body><![CDATA[taskId = id;
+taskType = type;
+requiredTime = timeNeeded;
+priority = priorityLevel;
+assignedPatient = p;
+]]></Body>
+				</Function>
+				<Function AccessType="default" StaticFunction="false">
+					<ReturnModificator>VOID</ReturnModificator>
+					<ReturnType><![CDATA[double]]></ReturnType>
+					<Id>1763415303632</Id>
+					<Name><![CDATA[DebugFunction]]></Name>
+					<X>180</X><Y>90</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Body><![CDATA[traceln("[Task] id=" + taskId + " type=" + taskType + " priority=" + priority);]]></Body>
 				</Function>
 			</Functions>
 			<AgentLinks>
@@ -4593,18 +4620,35 @@ traceln("[Task] ID=" + taskId + " type=" + taskType + " priority=" + priority);
 					<PublicFlag>false</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
 					<ShowLabel>true</ShowLabel>
-					<Body><![CDATA[// Initialization
-void initBid(Task t, Staff s, double value){
-this.task = t;
-this.bidder = s;
-this.bidValue = value;
-}
-
-
-// Debug print
-void printBid(){
-traceln("[Bid] Task=" + task.taskId + " bidder=" + bidder.getName() + " value=" + bidValue);
-}]]></Body>
+					<Parameter>
+						<Name><![CDATA[t]]></Name>
+						<Type><![CDATA[Task]]></Type>
+					</Parameter>
+					<Parameter>
+						<Name><![CDATA[s]]></Name>
+						<Type><![CDATA[Staff]]></Type>
+					</Parameter>
+					<Parameter>
+						<Name><![CDATA[value]]></Name>
+						<Type><![CDATA[double]]></Type>
+					</Parameter>
+					<Body><![CDATA[task = t;
+bidder = s;
+bidValue = value;]]></Body>
+				</Function>
+				<Function AccessType="default" StaticFunction="false">
+					<ReturnModificator>VOID</ReturnModificator>
+					<ReturnType><![CDATA[double]]></ReturnType>
+					<Id>1763415404606</Id>
+					<Name><![CDATA[printBid]]></Name>
+					<X>180</X><Y>100</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Body><![CDATA[traceln("[Bid] task=" + task.taskId +
+        " bidder=" + bidder +
+        " value=" + bidValue);]]></Body>
 				</Function>
 			</Functions>
 			<AgentLinks>
