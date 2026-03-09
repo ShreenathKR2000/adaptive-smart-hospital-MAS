@@ -7,7 +7,7 @@
 <AnyLogicWorkspace WorkspaceVersion="1.9" AnyLogicVersion="8.9.6.202509050523" AlpVersion="8.9.6">
 <Model>
 	<Id>1763393279412</Id>
-	<Name><![CDATA[AdaptiveHospital]]></Name>
+	<Name><![CDATA[AdaptiveHospitalversion 1]]></Name>
 	<EngineVersion>6</EngineVersion>
 	<JavaPackageName><![CDATA[adaptivehospital]]></JavaPackageName>
 	<ModelTimeUnit><![CDATA[Hour]]></ModelTimeUnit>
@@ -1822,7 +1822,7 @@ logArrival(p);]]></Code>
 						<Parameter>
 							<Name><![CDATA[resourceChoiceCondition]]></Name>
 							<Value Class="CodeValue">
-								<Code><![CDATA[agent == p.assignedBed]]></Code>
+								<Code><![CDATA[agent.assignedBed != null]]></Code>
 							</Value>
 						</Parameter>
 						<Parameter>
@@ -2347,9 +2347,6 @@ logArrival(p);]]></Code>
 					<Parameters>
 						<Parameter>
 							<Name><![CDATA[seizeFromOnePool]]></Name>
-							<Value Class="CodeValue">
-								<Code><![CDATA[true]]></Code>
-							</Value>
 						</Parameter>
 						<Parameter>
 							<Name><![CDATA[resourceSets]]></Name>
@@ -2429,7 +2426,7 @@ logArrival(p);]]></Code>
 						<Parameter>
 							<Name><![CDATA[resourceChoiceCondition]]></Name>
 							<Value Class="CodeValue">
-								<Code><![CDATA[agent == p.assignedDoctor]]></Code>
+								<Code><![CDATA[agent.assignedDoctor != null]]></Code>
 							</Value>
 						</Parameter>
 						<Parameter>
@@ -3702,7 +3699,7 @@ logArrival(p);]]></Code>
 						<Parameter>
 							<Name><![CDATA[resourceChoiceCondition]]></Name>
 							<Value Class="CodeValue">
-								<Code><![CDATA[agent == p.assignedXray]]></Code>
+								<Code><![CDATA[agent.assignedXray != null]]></Code>
 							</Value>
 						</Parameter>
 						<Parameter>
@@ -4016,7 +4013,7 @@ logArrival(p);]]></Code>
 						<Parameter>
 							<Name><![CDATA[resourceChoiceCondition]]></Name>
 							<Value Class="CodeValue">
-								<Code><![CDATA[agent == p.assignedNurse]]></Code>
+								<Code><![CDATA[agent.assignedNurse != null]]></Code>
 							</Value>
 						</Parameter>
 						<Parameter>
@@ -6370,20 +6367,15 @@ if (treatmentHistory != null) {
 						<Name><![CDATA[t]]></Name>
 						<Type><![CDATA[Task]]></Type>
 					</Parameter>
-					<Body><![CDATA[    // Step 1: Compute bid
-    // Lower bid = more willing to take task
-    // Example: workload + triage penalty (more urgent patients lower bid)
-    double workloadFactor = workload;          // e.g., 0 if free, higher if busy
-    double urgencyFactor = (5 - t.triageLevel); // More urgent patients reduce bid
-    bidValue = workloadFactor + urgencyFactor;
+					<Body><![CDATA[double workloadFactor = workload;            // 0 if free
+    double urgencyFactor = (5 - t.triageLevel); // higher triage = lower bid
+    double bidValue = workloadFactor + urgencyFactor; // declare the variable
 
-    // Optional: store task for debugging/log
-    System.out.println("Doctor " + getId() + " received task for Patient " + t.patient.getId() + 
+    // Optional: log
+    System.out.println("Doctor " + getId() + " received task for Patient " + t.getId() + 
                        ", bid = " + bidValue);
 
-    // Step 2: Return bid to task manager / Reception
-    return bidValue;
-]]></Body>
+    return bidValue;]]></Body>
 				</Function>
 			</Functions>
 			<AgentLinks>
@@ -6623,27 +6615,6 @@ if (treatmentHistory != null) {
 					</Properties>
 				</Variable>
 			</Variables>
-			<Functions>
-				<Function AccessType="default" StaticFunction="false">
-					<ReturnModificator>RETURNS_VALUE</ReturnModificator>
-					<ReturnType><![CDATA[double]]></ReturnType>
-					<Id>1767449094280</Id>
-					<Name><![CDATA[receiveTask]]></Name>
-					<X>190</X><Y>20</Y>
-					<Label><X>10</X><Y>0</Y></Label>
-					<PublicFlag>false</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>true</ShowLabel>
-					<Parameter>
-						<Name><![CDATA[t]]></Name>
-						<Type><![CDATA[Task]]></Type>
-					</Parameter>
-					<Body><![CDATA[double workloadFactor = workload;
-    double skillFactor = t.taskType.equals("NursingCare") ? 0 : 5; // Penalty if not skilled
-    bidValue = workloadFactor + skillFactor;
-    return bidValue;]]></Body>
-				</Function>
-			</Functions>
 			<AgentLinks>
 				<AgentLink>
 					<Id>1763394051605</Id>
@@ -6837,7 +6808,7 @@ if (treatmentHistory != null) {
 			<Variables>
 				<Variable Class="PlainVariable">
 					<Id>1767208374280</Id>
-					<Name><![CDATA[isAvailable]]></Name>
+					<Name><![CDATA[isBusy]]></Name>
 					<X>40</X><Y>160</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>false</PublicFlag>
@@ -6846,7 +6817,7 @@ if (treatmentHistory != null) {
 					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
 						<Type><![CDATA[boolean]]></Type>        
 						<InitialValue Class="CodeValue">
-							<Code><![CDATA[true]]></Code>
+							<Code><![CDATA[false]]></Code>
 						</InitialValue>
 					</Properties>
 				</Variable>
@@ -7636,20 +7607,6 @@ if (treatmentHistory != null) {
 bidder = s;
 bidValue = value;]]></Body>
 				</Function>
-				<Function AccessType="default" StaticFunction="false">
-					<ReturnModificator>VOID</ReturnModificator>
-					<ReturnType><![CDATA[double]]></ReturnType>
-					<Id>1763415404606</Id>
-					<Name><![CDATA[printBid]]></Name>
-					<X>180</X><Y>100</Y>
-					<Label><X>10</X><Y>0</Y></Label>
-					<PublicFlag>false</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>true</ShowLabel>
-					<Body><![CDATA[traceln("[Bid] task=" + task.taskId +
-        " bidder=" + bidder +
-        " value=" + bidValue);]]></Body>
-				</Function>
 			</Functions>
 			<AgentLinks>
 				<AgentLink>
@@ -8114,8 +8071,8 @@ return assignedDoctor;]]></Body>
     return null;]]></Body>
 				</Function>
 				<Function AccessType="private" StaticFunction="false">
-					<ReturnModificator>VOID</ReturnModificator>
-					<ReturnType><![CDATA[double]]></ReturnType>
+					<ReturnModificator>RETURNS_VALUE</ReturnModificator>
+					<ReturnType><![CDATA[Equipment]]></ReturnType>
 					<Id>1767451556942</Id>
 					<Name><![CDATA[getFirstAvailableXray]]></Name>
 					<X>40</X><Y>260</Y>
@@ -8123,8 +8080,8 @@ return assignedDoctor;]]></Body>
 					<PublicFlag>false</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
 					<ShowLabel>true</ShowLabel>
-					<Body><![CDATA[for (int i = 0; i < main.xrayPool.units.size(); i++) {
-        Equipment x = main.xrayPool.units.get(i);
+					<Body><![CDATA[for (int i = 0; i < main.XrayPool.units.size(); i++) {
+        Equipment x = main.XrayPool.units.get(i);
         if (!x.isBusy) {
             x.isBusy = true;
             return x;
